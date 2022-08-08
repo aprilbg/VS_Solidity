@@ -16,12 +16,26 @@ contract ERC721Implemntation {
     event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId);
     event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
 
-    string private _name = "bottle";
-    string private _symbol = "BOTL";
+    string private _name;
+    string private _symbol;
+    address payable private _master;
 
     constructor(string memory name, string memory symbol) public {
         _name = name;
         _symbol = symbol;
+        _master = msg.sender;
+    }
+
+    function name() public view returns (string memory){
+        return _name;
+    }
+
+    function symbol() public view returns (string memory){
+        return _symbol;
+    }
+
+    function master() public view returns (address payable){
+        return _master;
     }
 
     function mint(address _to, uint _tokenId) public {
@@ -48,15 +62,15 @@ contract ERC721Implemntation {
         return owner != address(0);
     }
 
-    function transferFrom(address _from, address _to, uint256 _tokenId) public{
+    function transferFrom(address _from, address _to, uint256 _tokenId) internal{
         address owner = ownerOf(_tokenId);
         require(msg.sender == owner || msg.sender == getApproved(_tokenId));
         require(_from != address(0) && _to != address(0));
 
         tokenOwner[_tokenId] = _to;
-        
         ownedTokenCount[_from] -= 1;
         ownedTokenCount[_to] += 1;
+        emit Transfer(_from, _to, _tokenId);
     }
 
     function safeTransferFrom(address _from, address  _to, uint256 _tokenId) public {
