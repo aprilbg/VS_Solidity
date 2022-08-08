@@ -82,7 +82,6 @@ contract BildNFT {
         address owner = ownerOf(_tokenId);
         require(_from == owner || _from == getApproved(_tokenId));
         require(_from != address(0) && _to != address(0));
-        require(_from != _from);
 
         ownedTokenCount[_from] -= 1;
         ownedTokenCount[_to] += 1;
