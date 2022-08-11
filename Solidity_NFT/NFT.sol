@@ -89,6 +89,7 @@ contract BildNFT {
         emit Transfer(_from, _to, _tokenId);
         _removeTokenFromOwnerEnumeration(_from, _tokenId);
         _addTokenToOwnerEnumeration(_to, _tokenId);
+        _removeTokenFromAllTokensEnumeration(_tokenId);
     }
 
     function _addTokenToOwnerEnumeration(address to, uint256 tokenId) private {
@@ -108,6 +109,17 @@ contract BildNFT {
         }
         delete _ownedTokensIndex[tokenId];
         delete _ownedTokens[from][lastTokenIndex];
+    }
+
+    function _removeTokenFromAllTokensEnumeration(uint256 tokenId) private {
+        uint256 lastTokenIndex = _allTokens.length - 1;
+        uint256 tokenIndex = _ownedTokensIndex[tokenId];
+        uint256 lastTokenId = _allTokens[lastTokenIndex];
+
+        _allTokens[tokenIndex] = lastTokenId;
+        _ownedTokensIndex[lastTokenId] = tokenIndex;
+        delete _ownedTokensIndex[tokenId];
+        _allTokens.pop();
     }
 
     function safeTransferFrom(address _from, address  _to, uint256 _tokenId) public {
